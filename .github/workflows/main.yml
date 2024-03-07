@@ -1,0 +1,48 @@
+name: Build and Deploy
+
+on:
+  push:
+    branches:
+      - main
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+
+    steps:
+    - name: Checkout code
+      uses: actions/checkout@v2
+
+    - name: Build redocly static page
+      run: |
+        makedir build
+        npx @redocly/cli build-docs openapi/openapi.yaml -o build/index.html
+
+    - name: Upload build artifacts
+      uses: actions/upload-artifact@v2
+      with:
+        name: build
+        path: ./build
+
+  deploy:
+    needs: build
+    runs-on: ubuntu-latest
+
+    steps:
+    - name: Checkout code
+      uses: actions/checkout@v2
+
+    - name: Download build artifacts
+      uses: actions/download-artifact@v2
+      with:
+        name: build
+        path: ./build
+
+    - name: Deploy with Nekoweb API (curl)
+      run: |
+        curl --request POST \
+        --url https://nekoweb.org/api/files/upload \
+        --header 'Authorization: ${{ secrets.API_KEY }}' \
+        --header 'content-type: multipart/form-data' \
+        --form pathname=/nekoapi \
+        --form files=@build/index.html
