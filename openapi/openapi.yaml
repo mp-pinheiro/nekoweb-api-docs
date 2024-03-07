@@ -92,7 +92,7 @@ paths:
             };
 
             fetch(url, options)
-              .then(res => res.json())
+              .then(res => res)
               .then(json => console.log(json))
               .catch(err => console.error('error:' + err));
         - lang: Python
@@ -121,7 +121,11 @@ paths:
       tags:
         - Files
       summary: /files/create
-      description: Create a new file or folder.
+      description: |
+        Create a new file or folder.
+
+
+        `⚠ Note:` docs say to use arg `path`, but that returns `Invalid path`. Using `pathname` works instead.
       requestBody:
         content:
           application/x-www-form-urlencoded:
@@ -175,7 +179,7 @@ paths:
             };
 
             fetch(url, options)
-              .then(res => res.json())
+              .then(res => res)
               .then(json => console.log(json))
               .catch(err => console.error('error:' + err));
         - lang: Python
@@ -214,11 +218,6 @@ paths:
       summary: /files/upload
       description: >-
         Upload a file or files. This will overwrite old files. Max 100MB.
-
-
-        **⚠ Note:** Returns `302 - Found. Redirecting to /dashboard/?path=test`
-        with a redirect, and `403 - Forbidden` if no redirect. Files are created
-        in both cases, just return code changes.
       requestBody:
         content:
           multipart/form-data:
@@ -227,9 +226,6 @@ paths:
               properties:
                 pathname:
                   type: string
-                  description: >-
-                    Official doc says defaults to root, but API returns `Invalid
-                    path` if not set.
                   example: /test
                 files:
                   type: string
@@ -242,86 +238,13 @@ paths:
             type: string
           example: 177e9b41e8b35b5e3cf90dd4a1ce90b9c8d1e6aa79863c0ebfd9c1e5dbb4d24d
       responses:
-        '302':
-          description: Found
+        '200':
+          description: Files uploaded
           headers:
-            Date:
-              schema:
-                type: string
-                example: Thu, 07 Mar 2024 01:28:26 GMT
             Content-Type:
               schema:
                 type: string
-                example: text/plain; charset=utf-8
-            Content-Length:
-              schema:
-                type: integer
-                example: '43'
-            Connection:
-              schema:
-                type: string
-                example: keep-alive
-            x-powered-by:
-              schema:
-                type: string
-                example: Nekoweb
-            access-control-allow-origin:
-              schema:
-                type: string
-                example: https://nekoweb.org
-            ratelimit-limit:
-              schema:
-                type: integer
-                example: '100'
-            ratelimit-remaining:
-              schema:
-                type: integer
-                example: '97'
-            ratelimit-reset:
-              schema:
-                type: integer
-                example: '359'
-            location:
-              schema:
-                type: string
-                example: /dashboard/?path=test
-            vary:
-              schema:
-                type: string
-                example: Accept
-            strict-transport-security:
-              schema:
-                type: string
-                example: max-age=63072000; includeSubdomains
-            x-content-type-options:
-              schema:
-                type: string
-                example: nosniff
-            CF-Cache-Status:
-              schema:
-                type: string
-                example: DYNAMIC
-            Report-To:
-              schema:
-                type: string
-                example: >-
-                  {"endpoints":[{"url":"https:\/\/a.nel.cloudflare.com\/report\/v3?s=ihaOY%2FoXuTYVF6z5RVpPzlp%2F1atKN1DhQUA1Xi3Li4htTdUm2K6s0bNEcvLCwNbkrnCySHaP1V6PUutsZHT1te0Hw%2Bl84gPjPoZNBud7lqz9Mtuqn396BuLjDqtH5w%3D%3D"}],"group":"cf-nel","max_age":604800}
-            NEL:
-              schema:
-                type: string
-                example: '{"success_fraction":0,"report_to":"cf-nel","max_age":604800}'
-            Server:
-              schema:
-                type: string
-                example: cloudflare
-            CF-RAY:
-              schema:
-                type: string
-                example: 8606cf0b692f1a88-GRU
-            alt-svc:
-              schema:
-                type: string
-                example: h3=":443"; ma=86400
+                example: text/plain
           content:
             text/plain:
               schema:
@@ -335,22 +258,21 @@ paths:
             const formData = new FormData();
 
             formData.append('pathname', '/test');
-            formData.append('files', '@test.txt');
+            formData.append('files', 'test.txt', { filepath: './test.txt' });
 
             let url = 'https://nekoweb.org/api/files/upload';
 
             let options = {
               method: 'POST',
               headers: {
-                Authorization: '177e9b41e8b35b5e3cf90dd4a1ce90b9c8d1e6aa79863c0ebfd9c1e5dbb4d24d',
-                'content-type': 'multipart/form-data; boundary=---011000010111000001101001'
+                Authorization: '177e9b41e8b35b5e3cf90dd4a1ce90b9c8d1e6aa79863c0ebfd9c1e5dbb4d24d'
               }
             };
 
             options.body = formData;
 
             fetch(url, options)
-              .then(res => res.json())
+              .then(res => res)
               .then(json => console.log(json))
               .catch(err => console.error('error:' + err));
         - lang: Python
@@ -368,8 +290,7 @@ paths:
             name=\"files\"\r\n\r\n@test.txt\r\n-----011000010111000001101001--\r\n"
 
             headers = {
-                "Authorization": "177e9b41e8b35b5e3cf90dd4a1ce90b9c8d1e6aa79863c0ebfd9c1e5dbb4d24d",
-                "content-type": "multipart/form-data; boundary=---011000010111000001101001"
+                "Authorization": "177e9b41e8b35b5e3cf90dd4a1ce90b9c8d1e6aa79863c0ebfd9c1e5dbb4d24d"
             }
 
 
@@ -383,7 +304,6 @@ paths:
             curl --request POST \
               --url https://nekoweb.org/api/files/upload \
               --header 'Authorization: 177e9b41e8b35b5e3cf90dd4a1ce90b9c8d1e6aa79863c0ebfd9c1e5dbb4d24d' \
-              --header 'content-type: multipart/form-data' \
               --form pathname=/test \
               --form files=@test.txt
   /files/delete:
@@ -441,7 +361,7 @@ paths:
             };
 
             fetch(url, options)
-              .then(res => res.json())
+              .then(res => res)
               .then(json => console.log(json))
               .catch(err => console.error('error:' + err));
         - lang: Python
@@ -531,7 +451,7 @@ paths:
             };
 
             fetch(url, options)
-              .then(res => res.json())
+              .then(res => res)
               .then(json => console.log(json))
               .catch(err => console.error('error:' + err));
         - lang: Python
@@ -570,11 +490,6 @@ paths:
       summary: /files/edit
       description: >-
         Edit a file.
-
-
-        **⚠ Note:** Docs say content type is
-        `application/x-www-form-urlencoded`, but that returns `Invalid
-        parameters`. Using `multipart/form-data` works instead.
       requestBody:
         content:
           multipart/form-data:
@@ -621,15 +536,14 @@ paths:
             let options = {
               method: 'POST',
               headers: {
-                Authorization: '177e9b41e8b35b5e3cf90dd4a1ce90b9c8d1e6aa79863c0ebfd9c1e5dbb4d24d',
-                'content-type': 'multipart/form-data; boundary=---011000010111000001101001'
+                Authorization: '177e9b41e8b35b5e3cf90dd4a1ce90b9c8d1e6aa79863c0ebfd9c1e5dbb4d24d'
               }
             };
 
             options.body = formData;
 
             fetch(url, options)
-              .then(res => res.json())
+              .then(res => res)
               .then(json => console.log(json))
               .catch(err => console.error('error:' + err));
         - lang: Python
@@ -647,8 +561,7 @@ paths:
             world\r\n-----011000010111000001101001--\r\n"
 
             headers = {
-                "Authorization": "177e9b41e8b35b5e3cf90dd4a1ce90b9c8d1e6aa79863c0ebfd9c1e5dbb4d24d",
-                "content-type": "multipart/form-data; boundary=---011000010111000001101001"
+                "Authorization": "177e9b41e8b35b5e3cf90dd4a1ce90b9c8d1e6aa79863c0ebfd9c1e5dbb4d24d"
             }
 
 
@@ -662,7 +575,6 @@ paths:
             curl --request POST \
               --url https://nekoweb.org/api/files/edit \
               --header 'Authorization: 177e9b41e8b35b5e3cf90dd4a1ce90b9c8d1e6aa79863c0ebfd9c1e5dbb4d24d' \
-              --header 'content-type: multipart/form-data' \
               --form pathname=test/test.txt \
               --form 'content=Hello world'
   /files/readfolder:
@@ -673,7 +585,7 @@ paths:
       description: |-
         Read a folder.
 
-        Returns a JSON array of file and folder names.
+        Returns a JSON array with objects like this: `{name: String, dir: Boolean}`
       parameters:
         - name: Authorization
           in: header
@@ -714,7 +626,7 @@ paths:
             };
 
             fetch(url, options)
-              .then(res => res.json())
+              .then(res => res)
               .then(json => console.log(json))
               .catch(err => console.error('error:' + err));
         - lang: Python
@@ -748,9 +660,7 @@ paths:
         - Big Files
       summary: /files/big/create
       description: |-
-        Read a folder.
-
-        Returns a JSON array of file and folder names.
+        Create upload for a big file. Allows you to upload files larger than 100MB.
       parameters:
         - name: Authorization
           in: header
@@ -781,7 +691,7 @@ paths:
             };
 
             fetch(url, options)
-              .then(res => res.json())
+              .then(res => res)
               .then(json => console.log(json))
               .catch(err => console.error('error:' + err));
         - lang: Python
@@ -814,9 +724,7 @@ paths:
         Append a chunk to a big file upload.
 
 
-        **⚠ Note:** this creates a temporary file in root with a placeholder
-        name. You should call `/files/big/move` afterwards to actually move and
-        rename your big file.
+        **⚠ Note:** you'll need to call `/files/big/move` or `/files/import/:bigid` to persist the file.
       requestBody:
         content:
           multipart/form-data:
@@ -852,22 +760,21 @@ paths:
             const formData = new FormData();
 
             formData.append('id', 'fnc8orbox7dk71y1kzwke');
-            formData.append('file', '@test.txt');
+            formData.append('file', 'test.txt', { filepath: './test.txt' });
 
             let url = 'https://nekoweb.org/api/files/big/append';
 
             let options = {
               method: 'POST',
               headers: {
-                Authorization: '177e9b41e8b35b5e3cf90dd4a1ce90b9c8d1e6aa79863c0ebfd9c1e5dbb4d24d',
-                'content-type': 'multipart/form-data; boundary=---011000010111000001101001'
+                Authorization: '177e9b41e8b35b5e3cf90dd4a1ce90b9c8d1e6aa79863c0ebfd9c1e5dbb4d24d'
               }
             };
 
             options.body = formData;
 
             fetch(url, options)
-              .then(res => res.json())
+              .then(res => res)
               .then(json => console.log(json))
               .catch(err => console.error('error:' + err));
         - lang: Python
@@ -885,8 +792,7 @@ paths:
             name=\"file\"\r\n\r\n@test.txt\r\n-----011000010111000001101001--\r\n"
 
             headers = {
-                "Authorization": "177e9b41e8b35b5e3cf90dd4a1ce90b9c8d1e6aa79863c0ebfd9c1e5dbb4d24d",
-                "content-type": "multipart/form-data; boundary=---011000010111000001101001"
+                "Authorization": "177e9b41e8b35b5e3cf90dd4a1ce90b9c8d1e6aa79863c0ebfd9c1e5dbb4d24d"
             }
 
 
@@ -900,7 +806,6 @@ paths:
             curl --request POST \
               --url https://nekoweb.org/api/files/big/append \
               --header 'Authorization: 177e9b41e8b35b5e3cf90dd4a1ce90b9c8d1e6aa79863c0ebfd9c1e5dbb4d24d' \
-              --header 'content-type: multipart/form-data' \
               --form id=fnc8orbox7dk71y1kzwke \
               --form file=@test.txt
   /files/big/move:
@@ -908,7 +813,7 @@ paths:
       tags:
         - Big Files
       summary: /files/big/move
-      description: Append a chunk to a big file upload.
+      description: Move a big file upload to the final location.
       requestBody:
         content:
           application/x-www-form-urlencoded:
@@ -962,7 +867,7 @@ paths:
             };
 
             fetch(url, options)
-              .then(res => res.json())
+              .then(res => res)
               .then(json => console.log(json))
               .catch(err => console.error('error:' + err));
         - lang: Python
@@ -1003,13 +908,8 @@ paths:
         Import a zip file from a big file upload. Replace :bigid with the id of
         the big file upload.
 
-
-        **⚠ Note:** couldn't get this one to work. Not sure how the archive
-        payload is expected on the backend, so every way I tried (binary, files
-        on multi-form, etc) gave me `500 - Couldn't read archive.`
-      requestBody:
-        content:
-          text/plain: {}
+        
+        **⚠ Note:** should be called after calling `/files/big/append` to upload the archive, with the same id.
       parameters:
         - name: Authorization
           in: header
@@ -1024,7 +924,7 @@ paths:
           example: il4w31f9m1aqqqe8op7hp
       responses:
         '200':
-          description: Successful response
+          description: Imported
           content:
             application/json: {}
       x-codeSamples:
@@ -1046,7 +946,7 @@ paths:
 
 
             fetch(url, options)
-              .then(res => res.json())
+              .then(res => res)
               .then(json => console.log(json))
               .catch(err => console.error('error:' + err));
         - lang: Python
