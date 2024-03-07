@@ -1,0 +1,1071 @@
+openapi: 3.1.0
+info:
+  title: Nekoweb API
+  description: >-
+    The API allows you to interact with nekoweb server programmatically. You can
+    use it to automate tasks like updating, creating and deleting files, and
+    more.
+
+    Official docs: [https://nekoweb.org/api](https://nekoweb.org/api)
+  license: 
+    name: Proprietary
+    url: https://nekoweb.org
+    
+servers:
+  - url: https://nekoweb.org/api
+tags:
+  - name: Site
+    description: Site related endpoints.
+  - name: Files
+    description: File related endpoints.
+  - name: Big Files
+    description: Big file related endpoints.
+components:
+  securitySchemes:
+    ApiKeyAuth:
+      type: apiKey
+      in: header
+      name: Authorization
+security:
+  - ApiKeyAuth: []
+paths:
+  /site/info/{username}:
+    get:
+      tags:
+        - Site
+      summary: /site/info/:username
+      description: >-
+        Get information about a user's site. Replace :username with the username
+        of the user. This endpoint doesn't require auth if requested from
+        Nekoweb site.
+
+
+        Returns a JSON object with id, username, title, updates, followers,
+        views, created_at and updated_at properties.
+      parameters:
+        - name: Authorization
+          in: header
+          schema:
+            type: string
+          example: 177e9b41e8b35b5e3cf90dd4a1ce90b9c8d1e6aa79863c0ebfd9c1e5dbb4d24d
+        - name: username
+          in: path
+          schema:
+            type: string
+          required: true
+          example: fairfruit
+      responses:
+        '200':
+          description: OK
+          headers:
+            Content-Type:
+              schema:
+                type: string
+                example: application/json
+          content:
+            application/json:
+              schema:
+                type: object
+              example:
+                id: 1855
+                username: fairfruit
+                title: Welcome to Fairfruit
+                updates: 5
+                followers: 0
+                views: 209
+                created_at: 1709235724576
+                updated_at: 1709597947291
+      x-codeSamples:
+        - lang: Node
+          source: |-
+            const fetch = require('node-fetch');
+
+            let url = 'https://nekoweb.org/api/site/info/fairfruit';
+
+            let options = {
+              method: 'GET',
+              headers: {
+                Authorization: '177e9b41e8b35b5e3cf90dd4a1ce90b9c8d1e6aa79863c0ebfd9c1e5dbb4d24d'
+              }
+            };
+
+            fetch(url, options)
+              .then(res => res.json())
+              .then(json => console.log(json))
+              .catch(err => console.error('error:' + err));
+        - lang: Python
+          source: >-
+            import requests
+
+
+            url = "https://nekoweb.org/api/site/info/fairfruit"
+
+
+            headers = {"Authorization":
+            "177e9b41e8b35b5e3cf90dd4a1ce90b9c8d1e6aa79863c0ebfd9c1e5dbb4d24d"}
+
+
+            response = requests.request("GET", url, headers=headers)
+
+
+            print(response.text)
+        - lang: Shell
+          source: |-
+            curl --request GET \
+              --url https://nekoweb.org/api/site/info/fairfruit \
+              --header 'Authorization: 177e9b41e8b35b5e3cf90dd4a1ce90b9c8d1e6aa79863c0ebfd9c1e5dbb4d24d'
+  /files/create:
+    post:
+      tags:
+        - Files
+      summary: /files/create
+      description: Create a new file or folder.
+      requestBody:
+        content:
+          application/x-www-form-urlencoded:
+            schema:
+              type: object
+              properties:
+                isFolder:
+                  type: boolean
+                  example: 'true'
+                pathname:
+                  type: string
+                  example: test
+      parameters:
+        - name: Authorization
+          in: header
+          schema:
+            type: string
+          example: 177e9b41e8b35b5e3cf90dd4a1ce90b9c8d1e6aa79863c0ebfd9c1e5dbb4d24d
+      responses:
+        '200':
+          description: OK
+          headers:
+            Content-Type:
+              schema:
+                type: string
+                example: text/plain
+          content:
+            text/plain:
+              schema:
+                type: string
+              example: Folder created
+      x-codeSamples:
+        - lang: Node
+          source: |-
+            const { URLSearchParams } = require('url');
+            const fetch = require('node-fetch');
+            const encodedParams = new URLSearchParams();
+
+            encodedParams.set('isFolder', 'true');
+            encodedParams.set('pathname', 'test');
+
+            let url = 'https://nekoweb.org/api/files/create';
+
+            let options = {
+              method: 'POST',
+              headers: {
+                Authorization: '177e9b41e8b35b5e3cf90dd4a1ce90b9c8d1e6aa79863c0ebfd9c1e5dbb4d24d',
+                'content-type': 'application/x-www-form-urlencoded'
+              },
+              body: encodedParams
+            };
+
+            fetch(url, options)
+              .then(res => res.json())
+              .then(json => console.log(json))
+              .catch(err => console.error('error:' + err));
+        - lang: Python
+          source: >-
+            import requests
+
+
+            url = "https://nekoweb.org/api/files/create"
+
+
+            payload = "isFolder=true&pathname=test"
+
+            headers = {
+                "Authorization": "177e9b41e8b35b5e3cf90dd4a1ce90b9c8d1e6aa79863c0ebfd9c1e5dbb4d24d",
+                "content-type": "application/x-www-form-urlencoded"
+            }
+
+
+            response = requests.request("POST", url, data=payload,
+            headers=headers)
+
+
+            print(response.text)
+        - lang: Shell
+          source: |-
+            curl --request POST \
+              --url https://nekoweb.org/api/files/create \
+              --header 'Authorization: 177e9b41e8b35b5e3cf90dd4a1ce90b9c8d1e6aa79863c0ebfd9c1e5dbb4d24d' \
+              --header 'content-type: application/x-www-form-urlencoded' \
+              --data isFolder=true \
+              --data pathname=test
+  /files/upload:
+    post:
+      tags:
+        - Files
+      summary: /files/upload
+      description: >-
+        Upload a file or files. This will overwrite old files. Max 100MB.
+
+
+        **⚠ Note:** Returns `302 - Found. Redirecting to /dashboard/?path=test`
+        with a redirect, and `403 - Forbidden` if no redirect. Files are created
+        in both cases, just return code changes.
+      requestBody:
+        content:
+          multipart/form-data:
+            schema:
+              type: object
+              properties:
+                pathname:
+                  type: string
+                  description: >-
+                    Official doc says defaults to root, but API returns `Invalid
+                    path` if not set.
+                  example: /test
+                files:
+                  type: string
+                  format: binary
+                  example: '@test.txt'
+      parameters:
+        - name: Authorization
+          in: header
+          schema:
+            type: string
+          example: 177e9b41e8b35b5e3cf90dd4a1ce90b9c8d1e6aa79863c0ebfd9c1e5dbb4d24d
+      responses:
+        '302':
+          description: Found
+          headers:
+            Date:
+              schema:
+                type: string
+                example: Thu, 07 Mar 2024 01:28:26 GMT
+            Content-Type:
+              schema:
+                type: string
+                example: text/plain; charset=utf-8
+            Content-Length:
+              schema:
+                type: integer
+                example: '43'
+            Connection:
+              schema:
+                type: string
+                example: keep-alive
+            x-powered-by:
+              schema:
+                type: string
+                example: Nekoweb
+            access-control-allow-origin:
+              schema:
+                type: string
+                example: https://nekoweb.org
+            ratelimit-limit:
+              schema:
+                type: integer
+                example: '100'
+            ratelimit-remaining:
+              schema:
+                type: integer
+                example: '97'
+            ratelimit-reset:
+              schema:
+                type: integer
+                example: '359'
+            location:
+              schema:
+                type: string
+                example: /dashboard/?path=test
+            vary:
+              schema:
+                type: string
+                example: Accept
+            strict-transport-security:
+              schema:
+                type: string
+                example: max-age=63072000; includeSubdomains
+            x-content-type-options:
+              schema:
+                type: string
+                example: nosniff
+            CF-Cache-Status:
+              schema:
+                type: string
+                example: DYNAMIC
+            Report-To:
+              schema:
+                type: string
+                example: >-
+                  {"endpoints":[{"url":"https:\/\/a.nel.cloudflare.com\/report\/v3?s=ihaOY%2FoXuTYVF6z5RVpPzlp%2F1atKN1DhQUA1Xi3Li4htTdUm2K6s0bNEcvLCwNbkrnCySHaP1V6PUutsZHT1te0Hw%2Bl84gPjPoZNBud7lqz9Mtuqn396BuLjDqtH5w%3D%3D"}],"group":"cf-nel","max_age":604800}
+            NEL:
+              schema:
+                type: string
+                example: '{"success_fraction":0,"report_to":"cf-nel","max_age":604800}'
+            Server:
+              schema:
+                type: string
+                example: cloudflare
+            CF-RAY:
+              schema:
+                type: string
+                example: 8606cf0b692f1a88-GRU
+            alt-svc:
+              schema:
+                type: string
+                example: h3=":443"; ma=86400
+          content:
+            text/plain:
+              schema:
+                type: string
+              example: Found. Redirecting to /dashboard/?path=test
+      x-codeSamples:
+        - lang: Node
+          source: |-
+            const FormData = require('form-data');
+            const fetch = require('node-fetch');
+            const formData = new FormData();
+
+            formData.append('pathname', '/test');
+            formData.append('files', '@test.txt');
+
+            let url = 'https://nekoweb.org/api/files/upload';
+
+            let options = {
+              method: 'POST',
+              headers: {
+                Authorization: '177e9b41e8b35b5e3cf90dd4a1ce90b9c8d1e6aa79863c0ebfd9c1e5dbb4d24d',
+                'content-type': 'multipart/form-data; boundary=---011000010111000001101001'
+              }
+            };
+
+            options.body = formData;
+
+            fetch(url, options)
+              .then(res => res.json())
+              .then(json => console.log(json))
+              .catch(err => console.error('error:' + err));
+        - lang: Python
+          source: >-
+            import requests
+
+
+            url = "https://nekoweb.org/api/files/upload"
+
+
+            payload = "-----011000010111000001101001\r\nContent-Disposition:
+            form-data;
+            name=\"pathname\"\r\n\r\n/test\r\n-----011000010111000001101001\r\nContent-Disposition:
+            form-data;
+            name=\"files\"\r\n\r\n@test.txt\r\n-----011000010111000001101001--\r\n"
+
+            headers = {
+                "Authorization": "177e9b41e8b35b5e3cf90dd4a1ce90b9c8d1e6aa79863c0ebfd9c1e5dbb4d24d",
+                "content-type": "multipart/form-data; boundary=---011000010111000001101001"
+            }
+
+
+            response = requests.request("POST", url, data=payload,
+            headers=headers)
+
+
+            print(response.text)
+        - lang: Shell
+          source: |-
+            curl --request POST \
+              --url https://nekoweb.org/api/files/upload \
+              --header 'Authorization: 177e9b41e8b35b5e3cf90dd4a1ce90b9c8d1e6aa79863c0ebfd9c1e5dbb4d24d' \
+              --header 'content-type: multipart/form-data' \
+              --form pathname=/test \
+              --form files=@test.txt
+  /files/delete:
+    post:
+      tags:
+        - Files
+      summary: /files/delete
+      description: Delete a file or folder.
+      requestBody:
+        content:
+          application/x-www-form-urlencoded:
+            schema:
+              type: object
+              properties:
+                pathname:
+                  type: string
+                  example: test
+      parameters:
+        - name: Authorization
+          in: header
+          schema:
+            type: string
+          example: 177e9b41e8b35b5e3cf90dd4a1ce90b9c8d1e6aa79863c0ebfd9c1e5dbb4d24d
+      responses:
+        '200':
+          description: OK
+          headers:
+            Content-Type:
+              schema:
+                type: string
+                example: text/plain
+          content:
+            text/plain:
+              schema:
+                type: string
+              example: File/folder deleted
+      x-codeSamples:
+        - lang: Node
+          source: |-
+            const { URLSearchParams } = require('url');
+            const fetch = require('node-fetch');
+            const encodedParams = new URLSearchParams();
+
+            encodedParams.set('pathname', 'test');
+
+            let url = 'https://nekoweb.org/api/files/delete';
+
+            let options = {
+              method: 'POST',
+              headers: {
+                Authorization: '177e9b41e8b35b5e3cf90dd4a1ce90b9c8d1e6aa79863c0ebfd9c1e5dbb4d24d',
+                'content-type': 'application/x-www-form-urlencoded'
+              },
+              body: encodedParams
+            };
+
+            fetch(url, options)
+              .then(res => res.json())
+              .then(json => console.log(json))
+              .catch(err => console.error('error:' + err));
+        - lang: Python
+          source: >-
+            import requests
+
+
+            url = "https://nekoweb.org/api/files/delete"
+
+
+            payload = "pathname=test"
+
+            headers = {
+                "Authorization": "177e9b41e8b35b5e3cf90dd4a1ce90b9c8d1e6aa79863c0ebfd9c1e5dbb4d24d",
+                "content-type": "application/x-www-form-urlencoded"
+            }
+
+
+            response = requests.request("POST", url, data=payload,
+            headers=headers)
+
+
+            print(response.text)
+        - lang: Shell
+          source: |-
+            curl --request POST \
+              --url https://nekoweb.org/api/files/delete \
+              --header 'Authorization: 177e9b41e8b35b5e3cf90dd4a1ce90b9c8d1e6aa79863c0ebfd9c1e5dbb4d24d' \
+              --header 'content-type: application/x-www-form-urlencoded' \
+              --data pathname=test
+  /files/rename:
+    post:
+      tags:
+        - Files
+      summary: /files/rename
+      description: Rename/Move a file or folder.
+      requestBody:
+        content:
+          application/x-www-form-urlencoded:
+            schema:
+              type: object
+              properties:
+                pathname:
+                  type: string
+                  example: test
+                newpathname:
+                  type: string
+                  example: test2
+      parameters:
+        - name: Authorization
+          in: header
+          schema:
+            type: string
+          example: 177e9b41e8b35b5e3cf90dd4a1ce90b9c8d1e6aa79863c0ebfd9c1e5dbb4d24d
+      responses:
+        '200':
+          description: OK
+          headers:
+            Content-Type:
+              schema:
+                type: string
+                example: text/plain
+          content:
+            text/plain:
+              schema:
+                type: string
+              example: File/folder renamed
+      x-codeSamples:
+        - lang: Node
+          source: |-
+            const { URLSearchParams } = require('url');
+            const fetch = require('node-fetch');
+            const encodedParams = new URLSearchParams();
+
+            encodedParams.set('pathname', 'test');
+            encodedParams.set('newpathname', 'test2');
+
+            let url = 'https://nekoweb.org/api/files/rename';
+
+            let options = {
+              method: 'POST',
+              headers: {
+                Authorization: '177e9b41e8b35b5e3cf90dd4a1ce90b9c8d1e6aa79863c0ebfd9c1e5dbb4d24d',
+                'content-type': 'application/x-www-form-urlencoded'
+              },
+              body: encodedParams
+            };
+
+            fetch(url, options)
+              .then(res => res.json())
+              .then(json => console.log(json))
+              .catch(err => console.error('error:' + err));
+        - lang: Python
+          source: >-
+            import requests
+
+
+            url = "https://nekoweb.org/api/files/rename"
+
+
+            payload = "pathname=test&newpathname=test2"
+
+            headers = {
+                "Authorization": "177e9b41e8b35b5e3cf90dd4a1ce90b9c8d1e6aa79863c0ebfd9c1e5dbb4d24d",
+                "content-type": "application/x-www-form-urlencoded"
+            }
+
+
+            response = requests.request("POST", url, data=payload,
+            headers=headers)
+
+
+            print(response.text)
+        - lang: Shell
+          source: |-
+            curl --request POST \
+              --url https://nekoweb.org/api/files/rename \
+              --header 'Authorization: 177e9b41e8b35b5e3cf90dd4a1ce90b9c8d1e6aa79863c0ebfd9c1e5dbb4d24d' \
+              --header 'content-type: application/x-www-form-urlencoded' \
+              --data pathname=test \
+              --data newpathname=test2
+  /files/edit:
+    post:
+      tags:
+        - Files
+      summary: /files/edit
+      description: >-
+        Edit a file.
+
+
+        **⚠ Note:** Docs say content type is
+        `application/x-www-form-urlencoded`, but that returns `Invalid
+        parameters`. Using `multipart/form-data` works instead.
+      requestBody:
+        content:
+          multipart/form-data:
+            schema:
+              type: object
+              properties:
+                pathname:
+                  type: string
+                  example: test/test.txt
+                content:
+                  type: string
+                  example: Hello world
+      parameters:
+        - name: Authorization
+          in: header
+          schema:
+            type: string
+          example: 177e9b41e8b35b5e3cf90dd4a1ce90b9c8d1e6aa79863c0ebfd9c1e5dbb4d24d
+      responses:
+        '200':
+          description: OK
+          headers:
+            Content-Type:
+              schema:
+                type: string
+                example: text/plain
+          content:
+            text/plain:
+              schema:
+                type: string
+              example: File edited
+      x-codeSamples:
+        - lang: Node
+          source: |-
+            const FormData = require('form-data');
+            const fetch = require('node-fetch');
+            const formData = new FormData();
+
+            formData.append('pathname', 'test/test.txt');
+            formData.append('content', 'Hello world');
+
+            let url = 'https://nekoweb.org/api/files/edit';
+
+            let options = {
+              method: 'POST',
+              headers: {
+                Authorization: '177e9b41e8b35b5e3cf90dd4a1ce90b9c8d1e6aa79863c0ebfd9c1e5dbb4d24d',
+                'content-type': 'multipart/form-data; boundary=---011000010111000001101001'
+              }
+            };
+
+            options.body = formData;
+
+            fetch(url, options)
+              .then(res => res.json())
+              .then(json => console.log(json))
+              .catch(err => console.error('error:' + err));
+        - lang: Python
+          source: >-
+            import requests
+
+
+            url = "https://nekoweb.org/api/files/edit"
+
+
+            payload = "-----011000010111000001101001\r\nContent-Disposition:
+            form-data;
+            name=\"pathname\"\r\n\r\ntest/test.txt\r\n-----011000010111000001101001\r\nContent-Disposition:
+            form-data; name=\"content\"\r\n\r\nHello
+            world\r\n-----011000010111000001101001--\r\n"
+
+            headers = {
+                "Authorization": "177e9b41e8b35b5e3cf90dd4a1ce90b9c8d1e6aa79863c0ebfd9c1e5dbb4d24d",
+                "content-type": "multipart/form-data; boundary=---011000010111000001101001"
+            }
+
+
+            response = requests.request("POST", url, data=payload,
+            headers=headers)
+
+
+            print(response.text)
+        - lang: Shell
+          source: |-
+            curl --request POST \
+              --url https://nekoweb.org/api/files/edit \
+              --header 'Authorization: 177e9b41e8b35b5e3cf90dd4a1ce90b9c8d1e6aa79863c0ebfd9c1e5dbb4d24d' \
+              --header 'content-type: multipart/form-data' \
+              --form pathname=test/test.txt \
+              --form 'content=Hello world'
+  /files/readfolder:
+    get:
+      tags:
+        - Files
+      summary: /files/readfolder
+      description: |-
+        Read a folder.
+
+        Returns a JSON array of file and folder names.
+      parameters:
+        - name: Authorization
+          in: header
+          schema:
+            type: string
+          example: 177e9b41e8b35b5e3cf90dd4a1ce90b9c8d1e6aa79863c0ebfd9c1e5dbb4d24d
+        - name: pathname
+          in: query
+          schema:
+            type: string
+          example: test
+      responses:
+        '200':
+          description: OK
+          headers:
+            Content-Type:
+              schema:
+                type: string
+                example: text/plain
+          content:
+            application/json:
+              schema:
+                type: object
+              example:
+                - test.txt
+      x-codeSamples:
+        - lang: Node
+          source: |-
+            const fetch = require('node-fetch');
+
+            let url = 'https://nekoweb.org/api/files/readfolder?pathname=test';
+
+            let options = {
+              method: 'GET',
+              headers: {
+                Authorization: '177e9b41e8b35b5e3cf90dd4a1ce90b9c8d1e6aa79863c0ebfd9c1e5dbb4d24d'
+              }
+            };
+
+            fetch(url, options)
+              .then(res => res.json())
+              .then(json => console.log(json))
+              .catch(err => console.error('error:' + err));
+        - lang: Python
+          source: >-
+            import requests
+
+
+            url = "https://nekoweb.org/api/files/readfolder"
+
+
+            querystring = {"pathname":"test"}
+
+
+            headers = {"Authorization":
+            "177e9b41e8b35b5e3cf90dd4a1ce90b9c8d1e6aa79863c0ebfd9c1e5dbb4d24d"}
+
+
+            response = requests.request("GET", url, headers=headers,
+            params=querystring)
+
+
+            print(response.text)
+        - lang: Shell
+          source: |-
+            curl --request GET \
+              --url 'https://nekoweb.org/api/files/readfolder?pathname=test' \
+              --header 'Authorization: 177e9b41e8b35b5e3cf90dd4a1ce90b9c8d1e6aa79863c0ebfd9c1e5dbb4d24d'
+  /files/big/create:
+    get:
+      tags:
+        - Big Files
+      summary: /files/big/create
+      description: |-
+        Read a folder.
+
+        Returns a JSON array of file and folder names.
+      parameters:
+        - name: Authorization
+          in: header
+          schema:
+            type: string
+          example: 177e9b41e8b35b5e3cf90dd4a1ce90b9c8d1e6aa79863c0ebfd9c1e5dbb4d24d
+      responses:
+        '200':
+          description: OK
+          content:
+            application/json:
+              schema:
+                type: object
+              example:
+                id: fnc8orbox7dk71y1kzwke
+      x-codeSamples:
+        - lang: Node
+          source: |-
+            const fetch = require('node-fetch');
+
+            let url = 'https://nekoweb.org/api/files/big/create';
+
+            let options = {
+              method: 'GET',
+              headers: {
+                Authorization: '177e9b41e8b35b5e3cf90dd4a1ce90b9c8d1e6aa79863c0ebfd9c1e5dbb4d24d'
+              }
+            };
+
+            fetch(url, options)
+              .then(res => res.json())
+              .then(json => console.log(json))
+              .catch(err => console.error('error:' + err));
+        - lang: Python
+          source: >-
+            import requests
+
+
+            url = "https://nekoweb.org/api/files/big/create"
+
+
+            headers = {"Authorization":
+            "177e9b41e8b35b5e3cf90dd4a1ce90b9c8d1e6aa79863c0ebfd9c1e5dbb4d24d"}
+
+
+            response = requests.request("GET", url, headers=headers)
+
+
+            print(response.text)
+        - lang: Shell
+          source: |-
+            curl --request GET \
+              --url https://nekoweb.org/api/files/big/create \
+              --header 'Authorization: 177e9b41e8b35b5e3cf90dd4a1ce90b9c8d1e6aa79863c0ebfd9c1e5dbb4d24d'
+  /files/big/append:
+    post:
+      tags:
+        - Big Files
+      summary: /files/big/append
+      description: >-
+        Append a chunk to a big file upload.
+
+
+        **⚠ Note:** this creates a temporary file in root with a placeholder
+        name. You should call `/files/big/move` afterwards to actually move and
+        rename your big file.
+      requestBody:
+        content:
+          multipart/form-data:
+            schema:
+              type: object
+              properties:
+                id:
+                  type: string
+                  example: fnc8orbox7dk71y1kzwke
+                file:
+                  type: string
+                  format: binary
+                  example: '@test.txt'
+      parameters:
+        - name: Authorization
+          in: header
+          schema:
+            type: string
+          example: 177e9b41e8b35b5e3cf90dd4a1ce90b9c8d1e6aa79863c0ebfd9c1e5dbb4d24d
+      responses:
+        '200':
+          description: OK
+          content:
+            text/plain:
+              schema:
+                type: string
+              example: Appended
+      x-codeSamples:
+        - lang: Node
+          source: |-
+            const FormData = require('form-data');
+            const fetch = require('node-fetch');
+            const formData = new FormData();
+
+            formData.append('id', 'fnc8orbox7dk71y1kzwke');
+            formData.append('file', '@test.txt');
+
+            let url = 'https://nekoweb.org/api/files/big/append';
+
+            let options = {
+              method: 'POST',
+              headers: {
+                Authorization: '177e9b41e8b35b5e3cf90dd4a1ce90b9c8d1e6aa79863c0ebfd9c1e5dbb4d24d',
+                'content-type': 'multipart/form-data; boundary=---011000010111000001101001'
+              }
+            };
+
+            options.body = formData;
+
+            fetch(url, options)
+              .then(res => res.json())
+              .then(json => console.log(json))
+              .catch(err => console.error('error:' + err));
+        - lang: Python
+          source: >-
+            import requests
+
+
+            url = "https://nekoweb.org/api/files/big/append"
+
+
+            payload = "-----011000010111000001101001\r\nContent-Disposition:
+            form-data;
+            name=\"id\"\r\n\r\nfnc8orbox7dk71y1kzwke\r\n-----011000010111000001101001\r\nContent-Disposition:
+            form-data;
+            name=\"file\"\r\n\r\n@test.txt\r\n-----011000010111000001101001--\r\n"
+
+            headers = {
+                "Authorization": "177e9b41e8b35b5e3cf90dd4a1ce90b9c8d1e6aa79863c0ebfd9c1e5dbb4d24d",
+                "content-type": "multipart/form-data; boundary=---011000010111000001101001"
+            }
+
+
+            response = requests.request("POST", url, data=payload,
+            headers=headers)
+
+
+            print(response.text)
+        - lang: Shell
+          source: |-
+            curl --request POST \
+              --url https://nekoweb.org/api/files/big/append \
+              --header 'Authorization: 177e9b41e8b35b5e3cf90dd4a1ce90b9c8d1e6aa79863c0ebfd9c1e5dbb4d24d' \
+              --header 'content-type: multipart/form-data' \
+              --form id=fnc8orbox7dk71y1kzwke \
+              --form file=@test.txt
+  /files/big/move:
+    post:
+      tags:
+        - Big Files
+      summary: /files/big/move
+      description: Append a chunk to a big file upload.
+      requestBody:
+        content:
+          application/x-www-form-urlencoded:
+            schema:
+              type: object
+              properties:
+                id:
+                  type: string
+                  example: fnc8orbox7dk71y1kzwke
+                pathname:
+                  type: string
+                  example: test.txt
+      parameters:
+        - name: Authorization
+          in: header
+          schema:
+            type: string
+          example: 177e9b41e8b35b5e3cf90dd4a1ce90b9c8d1e6aa79863c0ebfd9c1e5dbb4d24d
+      responses:
+        '200':
+          description: OK
+          headers:
+            Content-Type:
+              schema:
+                type: string
+                example: text/plain
+          content:
+            text/plain:
+              schema:
+                type: string
+              example: Moved
+      x-codeSamples:
+        - lang: Node
+          source: |-
+            const { URLSearchParams } = require('url');
+            const fetch = require('node-fetch');
+            const encodedParams = new URLSearchParams();
+
+            encodedParams.set('id', 'fnc8orbox7dk71y1kzwke');
+            encodedParams.set('pathname', 'test.txt');
+
+            let url = 'https://nekoweb.org/api/files/big/move';
+
+            let options = {
+              method: 'POST',
+              headers: {
+                Authorization: '177e9b41e8b35b5e3cf90dd4a1ce90b9c8d1e6aa79863c0ebfd9c1e5dbb4d24d',
+                'content-type': 'application/x-www-form-urlencoded'
+              },
+              body: encodedParams
+            };
+
+            fetch(url, options)
+              .then(res => res.json())
+              .then(json => console.log(json))
+              .catch(err => console.error('error:' + err));
+        - lang: Python
+          source: >-
+            import requests
+
+
+            url = "https://nekoweb.org/api/files/big/move"
+
+
+            payload = "id=fnc8orbox7dk71y1kzwke&pathname=test.txt"
+
+            headers = {
+                "Authorization": "177e9b41e8b35b5e3cf90dd4a1ce90b9c8d1e6aa79863c0ebfd9c1e5dbb4d24d",
+                "content-type": "application/x-www-form-urlencoded"
+            }
+
+
+            response = requests.request("POST", url, data=payload,
+            headers=headers)
+
+
+            print(response.text)
+        - lang: Shell
+          source: |-
+            curl --request POST \
+              --url https://nekoweb.org/api/files/big/move \
+              --header 'Authorization: 177e9b41e8b35b5e3cf90dd4a1ce90b9c8d1e6aa79863c0ebfd9c1e5dbb4d24d' \
+              --header 'content-type: application/x-www-form-urlencoded' \
+              --data id=fnc8orbox7dk71y1kzwke \
+              --data pathname=test.txt
+  /files/import/{bigid}:
+    post:
+      tags:
+        - Big Files
+      summary: /files/import/:bigid
+      description: >-
+        Import a zip file from a big file upload. Replace :bigid with the id of
+        the big file upload.
+
+
+        **⚠ Note:** couldn't get this one to work. Not sure how the archive
+        payload is expected on the backend, so every way I tried (binary, files
+        on multi-form, etc) gave me `500 - Couldn't read archive.`
+      requestBody:
+        content:
+          text/plain: {}
+      parameters:
+        - name: Authorization
+          in: header
+          schema:
+            type: string
+          example: 177e9b41e8b35b5e3cf90dd4a1ce90b9c8d1e6aa79863c0ebfd9c1e5dbb4d24d
+        - name: bigid
+          in: path
+          schema:
+            type: string
+          required: true
+          example: il4w31f9m1aqqqe8op7hp
+      responses:
+        '200':
+          description: Successful response
+          content:
+            application/json: {}
+      x-codeSamples:
+        - lang: Node
+          source: >-
+            const fetch = require('node-fetch');
+
+
+            let url =
+            'https://nekoweb.org/api/files/import/il4w31f9m1aqqqe8op7hp';
+
+
+            let options = {
+              method: 'POST',
+              headers: {
+                Authorization: '177e9b41e8b35b5e3cf90dd4a1ce90b9c8d1e6aa79863c0ebfd9c1e5dbb4d24d'
+              }
+            };
+
+
+            fetch(url, options)
+              .then(res => res.json())
+              .then(json => console.log(json))
+              .catch(err => console.error('error:' + err));
+        - lang: Python
+          source: >-
+            import requests
+
+
+            url = "https://nekoweb.org/api/files/import/il4w31f9m1aqqqe8op7hp"
+
+
+            headers = {"Authorization":
+            "177e9b41e8b35b5e3cf90dd4a1ce90b9c8d1e6aa79863c0ebfd9c1e5dbb4d24d"}
+
+
+            response = requests.request("POST", url, headers=headers)
+
+
+            print(response.text)
+        - lang: Shell
+          source: |-
+            curl --request POST \
+              --url https://nekoweb.org/api/files/import/il4w31f9m1aqqqe8op7hp \
+              --header 'Authorization: 177e9b41e8b35b5e3cf90dd4a1ce90b9c8d1e6aa79863c0ebfd9c1e5dbb4d24d'
+

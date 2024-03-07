@@ -1,0 +1,6 @@
+{
+    "title": "Nekoweb API",
+    "version": "?",
+    "description": "The API allows you to interact with nekoweb server programmatically. You can use it to automate tasks like updating, creating and deleting files, and more.",
+    "replaceVars": true
+}
