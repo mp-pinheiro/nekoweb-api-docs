@@ -4,9 +4,9 @@ info:
   description: >-
     The API allows you to interact with nekoweb server programmatically. You can
     use it to automate tasks like updating, creating and deleting files, and
-    more.
+    more.\
 
-    Official docs: [https://nekoweb.org/api](https://nekoweb.org/api).
+    Official docs: [https://nekoweb.org/api](https://nekoweb.org/api).\
 
     Contribute to this documentation: [https://github.com/mp-pinheiro/nekoweb-api-docs](https://github.com/mp-pinheiro/nekoweb-api-docs).
   license: 
