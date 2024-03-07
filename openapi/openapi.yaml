@@ -6,7 +6,9 @@ info:
     use it to automate tasks like updating, creating and deleting files, and
     more.
 
-    Official docs: [https://nekoweb.org/api](https://nekoweb.org/api)
+    Official docs: [https://nekoweb.org/api](https://nekoweb.org/api).
+
+    Contribute to this documentation: [https://github.com/mp-pinheiro/nekoweb-api-docs](https://github.com/mp-pinheiro/nekoweb-api-docs).
   license: 
     name: Proprietary
     url: https://nekoweb.org
