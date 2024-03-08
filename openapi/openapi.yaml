@@ -123,9 +123,6 @@ paths:
       summary: /files/create
       description: |
         Create a new file or folder.
-
-
-        `⚠ Note:` docs say to use arg `path`, but that returns `Invalid path`. Using `pathname` works instead.
       requestBody:
         content:
           application/x-www-form-urlencoded:
