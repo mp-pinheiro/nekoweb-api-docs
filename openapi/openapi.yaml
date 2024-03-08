@@ -603,14 +603,21 @@ paths:
           headers:
             Content-Type:
               schema:
-                type: string
-                example: text/plain
+                type: array
           content:
             application/json:
               schema:
-                type: object
-              example:
-                - test.txt
+                type: array
+              example: [
+                {
+                  name: 'test.txt',
+                  dir: false
+                },
+                {
+                  name: 'test2',
+                  dir: true
+                }
+              ]
       x-codeSamples:
         - lang: Node
           source: |-
