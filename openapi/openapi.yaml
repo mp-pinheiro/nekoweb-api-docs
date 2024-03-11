@@ -236,7 +236,7 @@ paths:
           example: 177e9b41e8b35b5e3cf90dd4a1ce90b9c8d1e6aa79863c0ebfd9c1e5dbb4d24d
       responses:
         '200':
-          description: Files uploaded
+          description: OK
           headers:
             Content-Type:
               schema:
@@ -246,7 +246,7 @@ paths:
             text/plain:
               schema:
                 type: string
-              example: Found. Redirecting to /dashboard/?path=test
+              example: Files uploaded
       x-codeSamples:
         - lang: Node
           source: |-
@@ -928,9 +928,12 @@ paths:
           example: il4w31f9m1aqqqe8op7hp
       responses:
         '200':
-          description: Imported
+          description: OK
           content:
-            application/json: {}
+            text/plain:
+              schema:
+                type: string
+              example: Imported
       x-codeSamples:
         - lang: Node
           source: >-
