@@ -47,3 +47,4 @@ jobs:
         --header 'content-type: multipart/form-data' \
         --form pathname=/nekoapi \
         --form files=@build/index.html
+        --form files=@build/favicon.ico
