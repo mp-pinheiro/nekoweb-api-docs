@@ -17,6 +17,7 @@ jobs:
       run: |
         mkdir build
         npx @redocly/cli build-docs openapi/openapi.yaml -o build/index.html
+        cp docs/favicon.ico build/favicon.ico
 
     - name: Upload build artifacts
       uses: actions/upload-artifact@v2

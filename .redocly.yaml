@@ -12,3 +12,9 @@ referenceDocs:
     colors:
       primary:
         main: "#9f3232"
+    typography:
+      fontFamily: "Courier New, monospace"
+    headings:
+      fontFamily: "Courier New, monospace"
+    rightPanel:
+      backgroundColor: "#583636"

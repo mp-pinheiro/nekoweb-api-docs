@@ -47,6 +47,5 @@ Feel free to ask questions or open issues if you need help.
 ### Redocly Documentation
 
 - [Redocly CLI](https://redoc.ly/docs/cli/)
-- [Redocly Reference Docs](https://redoc.ly/docs/reference-docs/)
-- [Redocly Lint](https://redoc.ly/docs/lint/)
+- [Redocly Reference Docs](https://redocly.com/docs/api-registry/)
 - [Create OpenAPI Repo](https://github.com/Redocly/create-openapi-repo)
