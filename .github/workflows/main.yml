@@ -13,15 +13,22 @@ jobs:
       - name: Checkout repository
         uses: actions/checkout@v4
 
-      - name: Prepare build
+      - name: Build redocly static page
         run: |
-          mkdir -p ./build
-          cp -r ./public/* ./build
+          mkdir build
+          npx @redocly/cli build-docs openapi/openapi.yaml -o build/index.html
+          cp docs/favicon.ico build/favicon.ico
+  
+      - name: Upload build artifacts
+        uses: actions/upload-artifact@v2
+        with:
+          name: build
+          path: ./build
 
       - name: Deploy to Nekoweb
         uses: mp-pinheiro/nekoweb-deploy@0.0.1
         with:
           API_KEY: ${{ secrets.NEKOWEB_API_KEY }}
           BUILD_DIR: './build'
-          DEPLOY_DIR: '/'
+          DEPLOY_DIR: '/nekoapi'
           CLEANUP: 'False'
