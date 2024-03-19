@@ -48,12 +48,11 @@ paths:
 
         Returns a JSON object with id, username, title, updates, followers,
         views, created_at and updated_at properties.
+
+
+        **⚠ Note:** no need to provide an API key fro this request as the endpoint
+        is public.
       parameters:
-        - name: Authorization
-          in: header
-          schema:
-            type: string
-          example: 177e9b41e8b35b5e3cf90dd4a1ce90b9c8d1e6aa79863c0ebfd9c1e5dbb4d24d
         - name: username
           in: path
           schema:
@@ -89,10 +88,7 @@ paths:
             let url = 'https://nekoweb.org/api/site/info/fairfruit';
 
             let options = {
-              method: 'GET',
-              headers: {
-                Authorization: '177e9b41e8b35b5e3cf90dd4a1ce90b9c8d1e6aa79863c0ebfd9c1e5dbb4d24d'
-              }
+              method: 'GET'
             };
 
             fetch(url, options)
@@ -107,19 +103,14 @@ paths:
             url = "https://nekoweb.org/api/site/info/fairfruit"
 
 
-            headers = {"Authorization":
-            "177e9b41e8b35b5e3cf90dd4a1ce90b9c8d1e6aa79863c0ebfd9c1e5dbb4d24d"}
-
-
-            response = requests.request("GET", url, headers=headers)
+            response = requests.request("GET", url)
 
 
             print(response.text)
         - lang: Shell
           source: |-
             curl --request GET \
-              --url https://nekoweb.org/api/site/info/fairfruit \
-              --header 'Authorization: 177e9b41e8b35b5e3cf90dd4a1ce90b9c8d1e6aa79863c0ebfd9c1e5dbb4d24d'
+              --url https://nekoweb.org/api/site/info/fairfruit
   /files/create:
     post:
       tags:
@@ -284,19 +275,15 @@ paths:
             url = "https://nekoweb.org/api/files/upload"
 
 
-            payload = "-----011000010111000001101001\r\nContent-Disposition:
-            form-data;
-            name=\"pathname\"\r\n\r\n/test\r\n-----011000010111000001101001\r\nContent-Disposition:
-            form-data;
-            name=\"files\"\r\n\r\n@test.txt\r\n-----011000010111000001101001--\r\n"
+            files = {"files": "test.txt", open("path/to/test.txt"), "application/octet-stream")}
+            data = {"pathname": "/test"}
 
             headers = {
                 "Authorization": "177e9b41e8b35b5e3cf90dd4a1ce90b9c8d1e6aa79863c0ebfd9c1e5dbb4d24d"
             }
 
 
-            response = requests.request("POST", url, data=payload,
-            headers=headers)
+            response = requests.request("POST", url, headers=headers, data=data, files=files)
 
 
             print(response.text)
@@ -555,22 +542,19 @@ paths:
             url = "https://nekoweb.org/api/files/edit"
 
 
-            payload = "-----011000010111000001101001\r\nContent-Disposition:
-            form-data;
-            name=\"pathname\"\r\n\r\ntest/test.txt\r\n-----011000010111000001101001\r\nContent-Disposition:
-            form-data; name=\"content\"\r\n\r\nHello
-            world\r\n-----011000010111000001101001--\r\n"
-
+            payload = {'pathname': 'test/test.txt',
+            'content': 'Hello world'}
+            
             headers = {
-                "Authorization": "177e9b41e8b35b5e3cf90dd4a1ce90b9c8d1e6aa79863c0ebfd9c1e5dbb4d24d"
+              'Authorization': 'bd77dda5279ddedde5615a90f6cdfeb51e7d49f107953ccc7ce30cdb8e54031b'
             }
 
 
-            response = requests.request("POST", url, data=payload,
-            headers=headers)
+            response = requests.request("POST", url, headers=headers, data=payload)
 
 
             print(response.text)
+
         - lang: Shell
           source: |-
             curl --request POST \
@@ -793,19 +777,15 @@ paths:
             url = "https://nekoweb.org/api/files/big/append"
 
 
-            payload = "-----011000010111000001101001\r\nContent-Disposition:
-            form-data;
-            name=\"id\"\r\n\r\nfnc8orbox7dk71y1kzwke\r\n-----011000010111000001101001\r\nContent-Disposition:
-            form-data;
-            name=\"file\"\r\n\r\n@test.txt\r\n-----011000010111000001101001--\r\n"
+            files = {"file": "test.txt", open("path/to/test.txt"), "application/octet-stream")}
+            data = {"id": "8ld8urp2x9jzdm7dquhy49"}
 
             headers = {
                 "Authorization": "177e9b41e8b35b5e3cf90dd4a1ce90b9c8d1e6aa79863c0ebfd9c1e5dbb4d24d"
             }
 
 
-            response = requests.request("POST", url, data=payload,
-            headers=headers)
+            response = requests.request("POST", url, headers=headers, data=data, files=files)
 
 
             print(response.text)
