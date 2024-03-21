@@ -34,3 +34,4 @@ jobs:
           CLEANUP: 'False'
           DELAY: '0.5'
           NEKOWEB_PAGENAME: 'fairfruit'
+          DEBUG: 'True'
