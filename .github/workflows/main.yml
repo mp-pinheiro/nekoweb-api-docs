@@ -26,11 +26,11 @@ jobs:
           path: ./build
 
       - name: Deploy to Nekoweb
-        uses: mp-pinheiro/nekoweb-deploy@dev
+        uses: mp-pinheiro/nekoweb-deploy@0.1.0
         with:
           API_KEY: ${{ secrets.NEKOWEB_API_KEY }}
           BUILD_DIR: './build'
-          DEPLOY_DIR: '/'
+          DEPLOY_DIR: '/nekoapi'
           CLEANUP: 'False'
           DELAY: '0.5'
           NEKOWEB_PAGENAME: 'fairfruit'
