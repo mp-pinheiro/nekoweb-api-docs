@@ -28,7 +28,7 @@ jobs:
       - name: Deploy to Nekoweb
         uses: mp-pinheiro/nekoweb-deploy@dev
         with:
-          API_KEY: ${{ secrets.NEKOWEB_API_KEY }}
+          API_KEY: ${{ secrets.API_KEY }}
           BUILD_DIR: './build'
           DEPLOY_DIR: '/'
           NEKOWEB_PAGENAME: 'fairfruit'
