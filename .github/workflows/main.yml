@@ -26,7 +26,7 @@ jobs:
           path: ./build
 
       - name: Deploy to Nekoweb
-        uses: mp-pinheiro/nekoweb-deploy@0.2.0
+        uses: mp-pinheiro/nekoweb-deploy@dev
         with:
           API_KEY: ${{ secrets.API_KEY }}
           BUILD_DIR: './build'
