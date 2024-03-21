@@ -3,7 +3,7 @@ name: Deploy to Nekoweb
 on:
   push:
     branches:
-      - main
+      - test
 
 jobs:
   deploy:
@@ -31,7 +31,4 @@ jobs:
           API_KEY: ${{ secrets.NEKOWEB_API_KEY }}
           BUILD_DIR: './build'
           DEPLOY_DIR: '/'
-          CLEANUP: 'False'
-          DELAY: '0.5'
           NEKOWEB_PAGENAME: 'fairfruit'
-          ENCRYPTION_KEY: ${{ secrets.NEKOWEB_ENCRYPTION_KEY }}
