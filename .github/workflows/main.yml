@@ -16,8 +16,8 @@ jobs:
       - name: Build redocly static page
         run: |
           mkdir build
-          npx @redocly/cli build-docs openapi/openapi.yaml -o build/index.html
-          cp docs/favicon.ico build/favicon.ico
+          npx @redocly/cli build-docs openapi/openapi.yaml -o build/index_test.html
+          cp docs/favicon.ico build/favicon_test.ico
   
       - name: Upload build artifacts
         uses: actions/upload-artifact@v2
@@ -30,7 +30,7 @@ jobs:
         with:
           API_KEY: ${{ secrets.API_KEY }}
           BUILD_DIR: './build'
-          DEPLOY_DIR: '/nekoapi'
+          DEPLOY_DIR: '/'
           CLEANUP: 'False'
           DELAY: '0.5'
           NEKOWEB_PAGENAME: 'fairfruit'
