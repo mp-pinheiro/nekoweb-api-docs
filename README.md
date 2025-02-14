@@ -24,7 +24,7 @@ smaller files.
 
 Version is purposely not set in the `openapi.yaml` file since
 we don't have an official API version mentioned in Nekoweb's
-documentation.
+documentation. 
 
 No `40x` or `50x` error responses are defined yet.
 
